@@ -6,7 +6,7 @@
     - [サーバ](#サーバ)
     - [クライアント](#クライアント)
   - [使用手順](#使用手順)
-    - [wslにnode.jsをインストールする手順](#wslにnodejsをインストールする手順)
+    - [Node.jsをインストール](#nodejsをインストール)
     - [http-serverインストール](#http-serverインストール)
     - [wsl2上のhttpsサーバに外部から接続](#wsl2上のhttpsサーバに外部から接続)
       - [wsl2側の設定](#wsl2側の設定)
@@ -39,9 +39,53 @@
 
 基本的に参考資料の通りに進める
 
-### wslにnode.jsをインストールする手順
+### Node.jsをインストール
 
-[WSL 2 上で Node.jis を設定する | Microsoft Docs](https://docs.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-wsl)
+参考文献：[WSL 2 上で Node.jis を設定する | Microsoft Docs](https://docs.microsoft.com/ja-jp/windows/dev-environment/javascript/nodejs-on-wsl)
+
+基本的に参考文献に従う。
+
+1. `sudo apt install curl`を使用して`cURL`をインストールする(コマンドラインでインターネットからコンテンツをダウンロードするために使用するツール)。ただし`wget`が使えるなら`cURL`は不要。
+1. <https://github.com/nvm-sh/nvm#install--update-script>のコマンドを実行する
+1. 端末を閉じて再度開く
+1. インストールを確認するには、`command -v nvm`を入力する。これによって`nvm`が返される。
+   1. シェルにzshを使用している場合、インストールスクリプトで`~/.zshrc`へ追記できず、上記コマンドで何も返ってこない場合がある。この場合は、`~/.bashrc`に以下のようなnvmの環境変数設定などが追加されているので、これを`~/.zshrc`にコピーし、`source ~/.zshrc`で変更を適用する
+
+      ```bash
+      # ~/.bashrc
+      # この通りに追加されているとは限らないので、
+      # ファイルを確認すること
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+      ```
+
+1. 現在インストールされている Node のバージョンを一覧表示します (この時点では何もないはずです): `nvm ls`
+1. Node.js の最新の安定した LTS リリースをインストールします (推奨): `nvm install --lts`
+   1. 参考文献では現在のリリースをインストールする手順も記載されているが、バージョンを切り替える必要が出たときにやればよい
+1. インストールされている Node のバージョンを一覧表示します: `nvm ls`。インストールしたバージョン（以下では`v14.17.4`）が表示されることを確認する。
+
+    ```zsh
+    ✗ nvm ls
+    ->     v14.17.4
+            system
+    default -> lts/* (-> v14.17.4)
+    iojs -> N/A (default)
+    unstable -> N/A (default)
+    node -> stable (-> v14.17.4) (default)
+    stable -> 14.17 (-> v14.17.4) (default)
+    lts/* -> lts/fermium (-> v14.17.4)
+    lts/argon -> v4.9.1 (-> N/A)
+    lts/boron -> v6.17.1 (-> N/A)
+    lts/carbon -> v8.17.0 (-> N/A)
+    lts/dubnium -> v10.24.1 (-> N/A)
+    lts/erbium -> v12.22.4 (-> N/A)
+    lts/fermium -> v14.17.4
+    ```
+
+1. Node.js がインストールされており、現在の既定のバージョンであることを確認します: `node --version`を使用。次に、`npm`があることも確認します: `npm --version`を使用。
+1. プロジェクトに使用する Node.js のバージョンを変更するには、`mkdir NodeTest`（ディレクトリ名は例）で新しいプロジェクトディレクトリを作成し、`cd NodeTest`でディレクトリを移動する。次に`nvm use node`を入力して現在のバージョンに切り替えるか、または`nvm use --lts`を入力して LTS のバージョンに切り替えます。また、`nvm use v8.2.1`のように、インストールした追加のバージョンに固有の番号を使用することもできます (使用可能な Node.js のバージョンをすべて一覧表示するには、コマンド`nvm ls-remote`を使用します)。
+1. vscodeで拡張機能*Node Extension Pack*(拡張機能ID: `swellaby.node-pack`)をインストールする。
 
 ### http-serverインストール
 
