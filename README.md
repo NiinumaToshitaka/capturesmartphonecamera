@@ -20,20 +20,20 @@
 
 ## 参考資料
 
-* [スマフォカメラにブラウザからアクセス - Qiita](https://qiita.com/tkyko13/items/1871d906736ac88a1f35)
+- [スマフォカメラにブラウザからアクセス - Qiita](https://qiita.com/tkyko13/items/1871d906736ac88a1f35)
 
 ## 開発環境
 
 ### サーバ
 
-* OS: <u>ubuntu 18.04</u> on <u>wsl2</u> on <u>windows 10 home</u>
+- OS: *ubuntu 18.04* on *wsl2* on *windows 10 home*
 
 ### クライアント
 
-* モデル：ASUS_Z017DA
-* ビルド番号：OPR1.170623.026.JP_Phone-15.0410.1807.75
-* OS: Android 8.0.0
-* ブラウザ：Chrome 92.0.4515.131
+- モデル：ASUS_Z017DA
+- ビルド番号：OPR1.170623.026.JP_Phone-15.0410.1807.75
+- OS: Android 8.0.0
+- ブラウザ：Chrome 92.0.4515.131
 
 ## 使用手順
 
@@ -48,7 +48,7 @@
 手早くwebサーバを立てるのに使う。
 
 ```bash
-$ npm install -g http-server
+npm install -g http-server
 ```
 
 ### wsl2上のhttpsサーバに外部から接続
