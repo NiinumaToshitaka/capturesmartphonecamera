@@ -92,6 +92,10 @@
 手早くwebサーバを立てるのに使う。
 
 ```bash
+# まだ実行していない場合のみ実行。
+# プロンプトは適当にEnterキー連打で進めてよい。
+npm init
+
 npm install -g http-server
 ```
 
