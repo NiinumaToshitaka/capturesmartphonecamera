@@ -13,6 +13,8 @@
     - [http-serverインストール](#http-serverインストール)
     - [wsl2上のhttpsサーバに外部から接続](#wsl2上のhttpsサーバに外部から接続)
       - [wsl2側の設定](#wsl2側の設定)
+        - [オレオレ証明書を作成](#オレオレ証明書を作成)
+        - [サーバを立てる](#サーバを立てる)
       - [windows側の設定](#windows側の設定)
     - [ルータに接続したデバイス間の通信](#ルータに接続したデバイス間の通信)
     - [クライアントをサーバと同じネットワークに接続する](#クライアントをサーバと同じネットワークに接続する)
@@ -133,6 +135,23 @@ windowsとwsl2は別ホストとして扱われるため，wsl2上でhttpsサー
 
 #### wsl2側の設定
 
+##### オレオレ証明書を作成
+
+httpsでのssl通信を行うには証明書が必要だが、本プロジェクトで使用するwebサーバは外部に公開するわけではないので、いわゆるオレオレ証明書を作成する。
+
+```bash
+# 3650日間有効な証明書を作成
+# 有効期間は`-days`オプションで指定
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+# 証明書を`keys`ディレクトリに移動
+mv key.pem cert.pem keys/
+```
+
+この方法で作成した証明書を使用してhttpsサーバを立てると、ブラウザからアクセスしたときに警告が出る。
+これは無視してよい。
+
+##### サーバを立てる
+
 ```bash
 # sshサービスを起動
 sudo service ssh restart
@@ -152,7 +171,8 @@ $ http-server
 # httpsサーバを起動
 # スマホのブラウザでカメラを利用するには
 # httpsである必要があるので，こちらを使用する。
-$ http-server -S -C cert.pem
+# `keys`ディレクトリにssl鍵(cert.pem, key.pem)が格納されていること。
+$ http-server -S --cert keys/cert.pem --key keys/key.pem
 ```
 
 windows側のブラウザで`https://[ip_addr_of_wsl2]:8080`にアクセスし，ページを開けることを確認する。
