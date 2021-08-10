@@ -83,10 +83,18 @@ windows側のブラウザで`https://[ip_addr_of_wsl2]:8080`にアクセスし�
 
 #### windows側の設定
 
-参考：[wsl2でsshサーバを起動し、外部からそこに接続 - Qiita](https://qiita.com/yabeenico/items/15532c703974dc40a7f5)
+wsl2のlocalhostフォワーディングを有効にする。
+`localhost`でwsl2にアクセスしない場合はやらなくてもいい。
+`c:\Users\<ユーザ名>\.wslconfig`に以下のように記述する。
+
+```ini
+localhostForwarding=True
+```
 
 管理者権限で以下のコマンドを実行すること。
 アドレスとポート番号は適宜変更すること。
+
+参考：[wsl2でsshサーバを起動し、外部からそこに接続 - Qiita](https://qiita.com/yabeenico/items/15532c703974dc40a7f5)
 
 ```powershell
 # Windowsのポート8080(listenport)に来たパケットをwsl2(connectaddress)のポート8080に転送する
