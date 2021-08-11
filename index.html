@@ -7,13 +7,24 @@
 </head>
 
 <body>
-    <p>カメラ画像</p>
-    <video id="myVideo" width="100%" height=auto autoplay="1"></video>
+    <div>
+        <p>カメラ画像</p>
+        <video id="myVideo" width="50%" height=auto autoplay="1"></video>
+    </div>
     <form>
         <button type="button" id="shutter">シャッター</button>
     </form>
-    <p>キャプチャ画像</p>
-    <canvas id="picture" width="100%" height=auto></canvas>
+    <div>
+        <p>キャプチャ画像</p>
+        <canvas id="picture" width="100%" height=auto></canvas>
+    </div>
+    <form>
+        <button type="button" id="send">サーバへ送信</button>
+    </form>
+    <div>
+        <p>sending json text</p>
+        <p id="sendingJsonText"></p>
+    </div>
 
     <script src="script.js"></script>
 </body>

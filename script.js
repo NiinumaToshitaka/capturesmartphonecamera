@@ -1,3 +1,9 @@
+//---------------------------------------------
+// 定数定義
+//---------------------------------------------
+// 保存を行うプログラムがあるURL
+const SAVE_URL = 'http://example.com/receive.php';
+
 /** 適当にvideoタグのオブジェクトを取得 */
 const video = document.getElementById("myVideo");
 /** キャンバスオブジェクト */
@@ -38,7 +44,61 @@ function update_canvas() {
         });
 }
 
+/** サーバへ画像を送信する */
+function send() {
+    document.getElementById("send")
+        .addEventListener("click", () => {
+            // Canvasのデータを取得
+            // DataURI Schemaが返却される
+            const hoge = canvas.toDataURL("image/png");
+
+            // 送信情報の設定
+            const param = {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify({ data: hoge })
+            };
+
+            // json形式の文字列を出力
+            document.getElementById("sendingJsonText").innerText = param.body;
+
+            // サーバへ送信
+            // sendServer(SAVE_URL, param);
+        });
+}
+
+/**
+ * サーバへJSON送信
+ *
+ * @param url   {string} 送信先URL
+ * @param param {object} fetchオプション
+ */
+function sendServer(url, param) {
+    fetch(url, param)
+        .then((response) => {
+            return response.json();
+        })
+        .then((json) => {
+            if (json.status) {
+                alert("送信に『成功』しました");
+                setImage(json.result);    //json.resultにはファイル名が入っている
+            }
+            else {
+                alert("送信に『失敗』しました");
+                console.log(`[error1] ${json.result}`);
+            }
+        })
+        .catch((error) => {
+            alert("送信に『失敗』しました");
+            console.log(`[error2] ${error}`);
+        });
+}
+
 // 動画のキャプチャを開始
 start_video_stream();
 // カメラから画像を取得してcanvasを更新する
 update_canvas();
+// サーバへ画像を送信する
+send();
