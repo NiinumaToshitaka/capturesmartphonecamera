@@ -27,6 +27,11 @@
 
 - [スマフォカメラにブラウザからアクセス - Qiita](https://qiita.com/tkyko13/items/1871d906736ac88a1f35)
 
+実装の参考
+
+- [[HTML5] カメラをJSで操作し写真を撮影する](https://blog.katsubemakito.net/html5/camera1)
+- [[HTML5] Canvasを画像に変換しサーバへ送信する](https://blog.katsubemakito.net/html5/canvas-sendserver)
+
 ## 開発環境
 
 ### サーバ
