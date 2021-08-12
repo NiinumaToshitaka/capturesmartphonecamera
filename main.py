@@ -72,9 +72,15 @@ def main():
     # 証明書読み込み
     context.load_cert_chain(CERTFILE, keyfile=KEYFILE)
     # httpsサーバ起動
-    with s.HTTPServer((HOST, PORT), MyHandler) as httpd:
-        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+    httpd = s.HTTPServer((HOST, PORT), MyHandler)
+    httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+    print("Server Starts - %s:%s" % (HOST, PORT))
+    try:
         httpd.serve_forever()
+    except KeyboardInterrupt:
+        # "ctrl + c"で終了
+        pass
+    print("Server Stops - %s:%s" % (HOST, PORT))
 
 
 if __name__ == "__main__":
