@@ -24,6 +24,7 @@ curl --tlsv1.2 --insecure -v -X POST -H "Content-Type: application/json" \
 import http.server as s
 import ssl
 import json
+from urllib.parse import parse_qs, urlparse
 
 
 """待ち受けアドレス"""
@@ -64,6 +65,30 @@ class MyHandler(s.BaseHTTPRequestHandler):
             body, sort_keys=False, indent=4, ensure_ascii=False
         )
         self.wfile.write(body_json.encode("utf-8"))
+
+    def do_GET(self):
+        """'GET'型のHTTP要求に対するサービスを行う
+
+        適当にメッセージを返す
+        """
+        print("path = {}".format(self.path))
+
+        # クエリに含まれるパラメータをパース
+        parsed_path = urlparse(self.path)
+        print(
+            "parsed: path = {}, query = {}".format(
+                parsed_path.path, parse_qs(parsed_path.query)
+            )
+        )
+
+        # クエリのヘッダ情報を表示
+        print("headers\r\n-----\r\n{}-----".format(self.headers))
+
+        # レスポンスを返す
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(b"Hello from do_GET")
 
 
 def main():
