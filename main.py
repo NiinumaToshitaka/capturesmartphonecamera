@@ -5,10 +5,24 @@
 
 [[python3] 簡易サーバでJSONデータ受け渡し　[POST] - Qiita]
 (https://qiita.com/tkj/items/1338ad081038fa64cef8)
-のコードを実装
+のコードをベースに実装
+
+通信確認には以下のコマンドを使用する。
+
+```bash
+# --tlsv1.2: TLS1.2で通信
+# --insecure: 自己署名証明書でも通信する。デフォルトだと怪しそうな証明書の場合は通信しない。
+# -v: 通信時の情報を出力
+# -X POST: POST通信する。実際にはこのオプションは自動的に推測されるようなので要らないかもしれない。
+# -H: リクエストヘッダ
+# -d: リクエストボディ
+curl --tlsv1.2 --insecure -v -X POST -H "Content-Type: application/json" \
+'https://[ip_address]:[port]' -d '{ "question": "今日の天気は" }'
+```
 """
 
 import http.server as s
+import ssl
 import json
 
 
@@ -16,6 +30,10 @@ import json
 HOST = "192.168.10.103"
 """待ち受けポート番号"""
 PORT = 8081
+"""証明書"""
+CERTFILE = "keys/cert.pem"
+"""秘密鍵"""
+KEYFILE = "keys/key.pem"
 
 
 class MyHandler(s.BaseHTTPRequestHandler):
@@ -50,8 +68,13 @@ class MyHandler(s.BaseHTTPRequestHandler):
 
 def main():
     """サーバ起動"""
-    httpd = s.HTTPServer((HOST, PORT), MyHandler)
-    httpd.serve_forever()
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    # 証明書読み込み
+    context.load_cert_chain(CERTFILE, keyfile=KEYFILE)
+    # httpsサーバ起動
+    with s.HTTPServer((HOST, PORT), MyHandler) as httpd:
+        httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
+        httpd.serve_forever()
 
 
 if __name__ == "__main__":
