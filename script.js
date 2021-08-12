@@ -2,7 +2,7 @@
 // 定数定義
 //---------------------------------------------
 // 保存を行うプログラムがあるURL
-const SAVE_URL = 'http://example.com/receive.php';
+const SAVE_URL = 'https://192.168.10.103:8081';
 
 /** 適当にvideoタグのオブジェクトを取得 */
 const video = document.getElementById("myVideo");
@@ -65,7 +65,7 @@ function send() {
             document.getElementById("sendingJsonText").innerText = param.body;
 
             // サーバへ送信
-            // sendServer(SAVE_URL, param);
+            sendServer(SAVE_URL, param);
         });
 }
 
@@ -83,7 +83,8 @@ function sendServer(url, param) {
         .then((json) => {
             if (json.status) {
                 alert("送信に『成功』しました");
-                setImage(json.result);    //json.resultにはファイル名が入っている
+                // json.resultにはファイル名が入っている
+                // setImage(json.result);
             }
             else {
                 alert("送信に『失敗』しました");
