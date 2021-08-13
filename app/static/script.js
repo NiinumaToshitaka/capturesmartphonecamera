@@ -8,6 +8,10 @@ const SAVE_URL = 'https://192.168.10.103:8081/capture_img';
 const video = document.getElementById("myVideo");
 /** キャンバスオブジェクト */
 const canvas = document.getElementById("picture");
+/** キャンバスの幅 */
+const canvas_width = canvas.width;
+/** キャンバスの高さ */
+const canvas_height = canvas.height;
 
 /**
  * 動画のキャプチャを開始する
@@ -17,7 +21,9 @@ function start_video_stream() {
     const constrains = {
         // 映像はバックカメラ（環境側カメラ）を使用する
         video: {
-            facingMode: "environment"
+            facingMode: "environment",
+            width: canvas_width,
+            height: canvas_height
         },
         // 音声は不要なので使用しない
         audio: false
