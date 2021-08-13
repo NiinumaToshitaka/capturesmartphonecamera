@@ -10,6 +10,9 @@ api = Flask(__name__)
 # CORS(Cross-Origin Resource Sharing)対応のために必要
 CORS(api)
 
+image_prosessor = service.ImageProcessing()
+"""画像処理オブジェクト"""
+
 
 @api.route("/", methods=["GET"])
 def index():
@@ -26,5 +29,7 @@ def capture_img():
         # Noneの場合はレスポンスを返して終了
         return make_response("FAILURE")
     # 画像データを保存
-    msg = service.save_img(img_base64)
+    msg = image_prosessor.save_img(img_base64)
+    # 画像に対する処理を実行
+    image_prosessor.img_processing()
     return make_response(msg)
