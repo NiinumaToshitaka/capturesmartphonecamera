@@ -2,7 +2,7 @@
 // 定数定義
 //---------------------------------------------
 // 保存を行うプログラムがあるURL
-const SAVE_URL = 'https://192.168.10.103:8081';
+const SAVE_URL = 'https://192.168.10.103:8081/capture_img';
 
 /** 適当にvideoタグのオブジェクトを取得 */
 const video = document.getElementById("myVideo");
@@ -44,56 +44,29 @@ function update_canvas() {
         });
 }
 
+/** キャプチャ画像データ(base64)をPOST */
+function captureImg(img_base64) {
+    let xhr = new XMLHttpRequest();
+    const body = new FormData();
+    body.append('img', img_base64);
+    xhr.open('POST', SAVE_URL, true);
+    xhr.onload = () => {
+        console.log(xhr.responseText)
+    };
+    xhr.send(body);
+}
+
 /** サーバへ画像を送信する */
 function send() {
     document.getElementById("send")
         .addEventListener("click", () => {
             // Canvasのデータを取得
             // DataURI Schemaが返却される
-            const hoge = canvas.toDataURL("image/png");
-
-            // 送信情報の設定
-            const param = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json; charset=utf-8"
-                },
-                body: JSON.stringify({ data: hoge })
-            };
-
-            // json形式の文字列を出力
-            document.getElementById("sendingJsonText").innerText = param.body;
-
-            // サーバへ送信
-            sendServer(SAVE_URL, param);
-        });
-}
-
-/**
- * サーバへJSON送信
- *
- * @param url   {string} 送信先URL
- * @param param {object} fetchオプション
- */
-function sendServer(url, param) {
-    fetch(url, param)
-        .then((response) => {
-            return response.json();
-        })
-        .then((json) => {
-            if (json.status) {
-                alert("送信に『成功』しました");
-                // json.resultにはファイル名が入っている
-                // setImage(json.result);
-            }
-            else {
-                alert("送信に『失敗』しました");
-                console.log(`[error1] ${json.result}`);
-            }
-        })
-        .catch((error) => {
-            alert("送信に『失敗』しました");
-            console.log(`[error2] ${error}`);
+            // 取得したbase64データのヘッドを取り除く
+            const img_base64 = canvas.toDataURL("image/jpeg").replace(/^.*,/, '');
+            console.log(img_base64);
+            // 送信
+            captureImg(img_base64);
         });
 }
 

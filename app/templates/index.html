@@ -21,12 +21,8 @@
     <form>
         <button type="button" id="send">サーバへ送信</button>
     </form>
-    <div>
-        <p>sending json text</p>
-        <textarea id="sendingJsonText" cols="50" rows="20"></textarea>
-    </div>
 
-    <script src="script.js"></script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 
 </html>
