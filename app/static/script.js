@@ -58,7 +58,7 @@ function reset_sending_status() {
  * @param {string} status 送信ステータス文字列
  */
 function update_sending_status(status) {
-    document.getElementById("sendResult").innerText = status;
+    document.getElementById("sendResult").innerHTML = status;
 }
 
 /** 
