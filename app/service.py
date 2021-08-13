@@ -47,11 +47,16 @@ class MotionDetection:
         self.__before_frame = None
         """前フレーム"""
 
-    def detect(self, frame):
+    def detect(self, frame) -> (bool, tuple):
         """動体検知を実行
 
         Args:
             frame (numpy.ndarray): 画像データ
+
+        Returns:
+            bool: 動体を検知したか。True: 検知した。False: 検知しなかった。
+            tuple: 動体を検知した場合、検知した動体の位置。画像に対して、(x, y, width, height)の順。
+                   動体を検知しなかった場合は空のtuple。
         """
         # 加工なし画像を表示する
         cv2.imshow("Raw Frame", frame)
@@ -65,7 +70,7 @@ class MotionDetection:
             # 初めてフレームを取得した場合は、前フレームをセットして終了
             print("before frame is None")
             self.__before_frame = gray.copy().astype("float")
-            return False
+            return (False, ())
         # 現フレームと前フレームの加重平均を使うと良いらしい
         cv2.accumulateWeighted(gray, self.__before_frame, 0.5)
         mdframe = cv2.absdiff(gray, cv2.convertScaleAbs(self.__before_frame))
@@ -94,7 +99,7 @@ class MotionDetection:
         # 差分が存在しないため、動体が存在しない。
         if 0 == len(contours):
             print("detect no motion")
-            return
+            return (False, ())
 
         """検出した輪郭のリスト, 検出した輪郭の階層情報"""
         max_area = 0
@@ -105,6 +110,8 @@ class MotionDetection:
         """動体とみなす面積の最小値"""
         AREA_LIMIT_MAX = 10000
         """動体とみなす面積の最大値"""
+
+        # 検出した輪郭のうち、面積が最大のものを求める
         for cnt in contours:
             # 輪郭の面積を求めてくれるcontourArea
             area = cv2.contourArea(cnt)
@@ -126,17 +133,22 @@ class MotionDetection:
                 3,
                 cv2.LINE_AA,
             )
+            cv2.imshow("MotionDetected Area Frame", areaframe)
+            # キー入力を待つ
+            cv2.waitKey(0)
+            return (False, ())
         else:
             # 諸般の事情で矩形検出とした。
             x, y, w, h = cv2.boundingRect(target)
             areaframe = cv2.rectangle(
                 frame, (x, y), (x + w, y + h), (0, 255, 0), 2
             )
-
-        cv2.imshow("MotionDetected Area Frame", areaframe)
-        # キー入力を待つ
-        cv2.waitKey(0)
-        return True
+            cv2.imshow("MotionDetected Area Frame", areaframe)
+            # キー入力を待つ
+            cv2.waitKey(0)
+            detected_area = (x, y, w, h)
+            """動体の位置"""
+            return (True, detected_area)
 
 
 class ImageProcessing:
