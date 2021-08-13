@@ -89,6 +89,13 @@ class MotionDetection:
         contours, hierarchy = cv2.findContours(
             thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
+
+        # 輪郭を検出できなかった場合、前フレームと現フレームとの
+        # 差分が存在しないため、動体が存在しない。
+        if 0 == len(contours):
+            print("detect no motion")
+            return
+
         """検出した輪郭のリスト, 検出した輪郭の階層情報"""
         max_area = 0
         """輪郭の面積の最大値"""
