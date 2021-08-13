@@ -13,9 +13,7 @@ const canvas_width = canvas.width;
 /** キャンバスの高さ */
 const canvas_height = canvas.height;
 
-/**
- * 動画のキャプチャを開始する
- */
+/** 動画のキャプチャを開始する */
 function start_video_stream() {
     // 映像・音声を取得するかの設定
     const constrains = {
@@ -50,14 +48,33 @@ function update_canvas() {
         });
 }
 
-/** キャプチャ画像データ(base64)をPOST */
+/** 画像データの送信ステータス文字列をリセットする */
+function reset_sending_status() {
+    document.getElementById("sendResult").innerText = "";
+}
+
+/**
+ * 画像データの送信ステータス文字列を更新する
+ * @param {string} status 送信ステータス文字列
+ */
+function update_sending_status(status) {
+    document.getElementById("sendResult").innerText = status;
+}
+
+/** 
+ * キャプチャ画像データ(base64)をPOST
+ * @param {string} img_base64 base64形式にエンコードされた画像データ
+ */
 function captureImg(img_base64) {
+    // 送信ステータス文字列をリセット
+    reset_sending_status();
     let xhr = new XMLHttpRequest();
     const body = new FormData();
     body.append('img', img_base64);
     xhr.open('POST', SAVE_URL, true);
     xhr.onload = () => {
-        console.log(xhr.responseText)
+        // 送信ステータス文字列を更新
+        update_sending_status(xhr.responseText);
     };
     xhr.send(body);
 }
@@ -68,9 +85,8 @@ function send() {
         .addEventListener("click", () => {
             // Canvasのデータを取得
             // DataURI Schemaが返却される
-            // 取得したbase64データのヘッドを取り除く
+            // replaceで取得したbase64データのヘッドを取り除く
             const img_base64 = canvas.toDataURL("image/jpeg").replace(/^.*,/, '');
-            console.log(img_base64);
             // 送信
             captureImg(img_base64);
         });

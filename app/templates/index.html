@@ -18,9 +18,12 @@
         <p>キャプチャ画像</p>
         <canvas id="picture" width="640" height="480"></canvas>
     </div>
-    <form>
-        <button type="button" id="send">サーバへ送信</button>
-    </form>
+    <div>
+        <form>
+            <button type="button" id="send">サーバへ送信</button>
+        </form>
+        <p>送信ステータス: <span id="sendResult"></span></p>
+    </div>
 
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
