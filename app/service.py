@@ -4,8 +4,8 @@ import base64
 import numpy as np
 import cv2
 
-"""デコードされた画像の保存先パス"""
 SAVE_DIR = "images/img0000.jpg"
+"""デコードされた画像の保存先パス"""
 
 
 def save_img(img_base64: str) -> str:

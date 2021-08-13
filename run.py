@@ -3,14 +3,14 @@
 from app.api import api
 import ssl
 
-"""証明書ファイル"""
 CERT_FILE = "keys/cert.pem"
-"""秘密鍵ファイル"""
+"""証明書ファイル"""
 KEY_FILE = "keys/key.pem"
-"""待ち受けアドレス"""
+"""秘密鍵ファイル"""
 HOST = "192.168.10.103"
-"""待ち受けポート番号"""
+"""待ち受けアドレス"""
 PORT = 8081
+"""待ち受けポート番号"""
 
 
 def main():
