@@ -19,13 +19,11 @@ def index():
 @api.route("/capture_img", methods=["POST"])
 def capture_img():
     """画像データを保存する"""
-    print("recv POST")
     # リクエストから"img"パラメータを取得する。
     # パラメータが存在しない場合はNoneになる。
     img_base64 = request.form.get("img")
     if img_base64 is None:
         # Noneの場合はレスポンスを返して終了
-        print("img_base64 is None")
         return make_response("FAILURE")
     # 画像データを保存
     msg = service.save_img(img_base64)
