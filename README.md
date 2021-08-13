@@ -61,7 +61,7 @@ inet 192.168.10.103/24 brd 192.168.10.255 scope global dynamic noprefixroute wlp
 ### ファイアウォール設定
 
 ファイアウォールでクライアントからサーバへのパケットをブロックされるとwebサーバへアクセスできないので、ポートを開放する。
-ここでは8080番ポートを開放する。
+ここでは8081番ポートを開放する。
 
 #### 現在の状態を確認
 
@@ -73,7 +73,7 @@ $ sudo ufw status
 #### ポートを開放
 
 ```bash
-sudo ufw allow 8080
+sudo ufw allow 8081
 sudo ufw reload
 
 $ sudo ufw status
@@ -81,8 +81,8 @@ $ sudo ufw status
 
 To                         Action      From
 --                         ------      ----
-8080                       ALLOW       Anywhere
-8080 (v6)                  ALLOW       Anywhere (v6)
+8081                       ALLOW       Anywhere
+8081 (v6)                  ALLOW       Anywhere (v6)
 ```
 
 ### オレオレ証明書を作成
