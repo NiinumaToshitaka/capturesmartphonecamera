@@ -3,26 +3,19 @@
 import cv2
 
 # tuple型の型アノテーションに使用
-from typing import Tuple
+from typing import Tuple, List
 
 
 class MotionDetectionResult:
     """動体検知結果"""
 
-    def __init__(
-        self, has_detect: bool, detected_area: Tuple[int, int, int, int]
-    ):
+    def __init__(self, detected_area: List[Tuple[int, int, int, int]]):
         """コンストラクタ
 
         Args:
-            has_detect: 動体検知フラグ
-                True: 検知した
-                False: 検知しなかった
             detected_area: 検知した動体の位置
                 画像に対して、(x, y, width, height)の順
         """
-        self.has_detect = has_detect
-        """動体検知フラグ"""
         self.detected_area = detected_area
         """検知した動体の位置"""
 
@@ -62,7 +55,7 @@ class MotionDetection:
             # 初めてフレームを取得した場合は、前フレームをセットして終了
             print("before frame is None")
             self.__before_frame = gray.copy().astype("float")
-            return MotionDetectionResult(False, ())
+            return MotionDetectionResult([])
         # 現フレームと前フレームの加重平均を使うと良いらしい
         cv2.accumulateWeighted(
             gray, self.__before_frame, MotionDetection.__ACCUMULATION_WEIGHT
@@ -96,7 +89,7 @@ class MotionDetection:
         # 差分が存在しないため、動体が存在しない。
         if 0 == len(contours):
             print("detect no motion")
-            return MotionDetectionResult(False, ())
+            return MotionDetectionResult([])
 
         max_area = 0
         """輪郭の面積の最大値"""
@@ -118,10 +111,10 @@ class MotionDetection:
         # 動いているエリアのうちそこそこの大きさのものがあればそれを矩形で表示する
         if max_area <= MotionDetection.__AREA_LIMIT_MIN:
             # 検知できなかった場合
-            return MotionDetectionResult(False, ())
+            return MotionDetectionResult([])
         else:
             # 検知できた場合
             # 諸般の事情で矩形検出とした。
             x, y, w, h = cv2.boundingRect(target)
             """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
-            return MotionDetectionResult(True, (x, y, w, h))
+            return MotionDetectionResult([(x, y, w, h)])

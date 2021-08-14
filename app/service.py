@@ -69,8 +69,7 @@ class ImageProcessing:
         Returns:
             動体検知結果を格納した辞書型
         """
-        response = dict.fromkeys(["detection_status", "detected_area"])
-        response["detection_status"] = detection_result.has_detect
+        response = dict.fromkeys(["detected_area"])
         response["detected_area"] = detection_result.detected_area
         return response
 

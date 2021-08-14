@@ -74,15 +74,18 @@ function update_sending_status(status) {
         return;
     }
 
-    // 動体検知結果
-    const detection_status = json_data.detection_result.detection_status;
     // 動体検知位置
-    const detected_area = json_data.detection_result.detected_area;
-    document.getElementById("detectionStatus").innerText = detection_status
+    const detected_areas = json_data.detection_result.detected_area;
+    // 動体を検知したか
+    const is_detect = 0 < detected_areas.length;
+    document.getElementById("detectionStatus").innerText = is_detect
         ? "YES"
         : "NO";
-    switch (detection_status) {
+    switch (is_detect) {
         case true:
+            // TODO 検知した動体をすべて出力する
+            // とりあえず先頭の要素を出力する
+            const detected_area = detected_areas[0];
             const detected_area_string =
                 "(x, y, width, height) = (" +
                 detected_area[0] +
