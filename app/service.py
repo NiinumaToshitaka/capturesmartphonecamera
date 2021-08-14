@@ -6,6 +6,16 @@ import cv2
 from app.python_modules import RingCounter, MotionDetection
 
 
+def make_response_dict(request_status: bool, detection_result: dict) -> dict:
+    response = dict.fromkeys(["request_status", "detection_result"])
+    if request_status is True:
+        response["request_status"] = "OK"
+    else:
+        response["request_status"] = "NG"
+    response["detection_result"] = str(detection_result)
+    return response
+
+
 class ImageProcessing:
     """画像処理を扱うクラス"""
 
@@ -28,17 +38,25 @@ class ImageProcessing:
         Args:
             img (numpy.ndarray): 画像データ
         """
-        # デコードされた画像の保存先パス
         filepath = ImageProcessing.__SAVE_PATH.format(
             self.__counter.get_count()
         )
+        """デコードされた画像の保存先パス"""
         # 画像を保存
         cv2.imwrite(filepath, img)
         # 画像の保存枚数カウンタを1増やす
         self.__counter.increment()
         return
 
-    def save_img(self, img_base64: str) -> str:
+    def __make_response(
+        self, detection_status: bool, detected_area: tuple
+    ) -> dict:
+        response = dict.fromkeys(["detection_status", "detected_area"])
+        response["detection_status"] = str(detection_status)
+        response["detected_area"] = str(detected_area)
+        return response
+
+    def save_img(self, img_base64: str) -> dict:
         """base64にエンコードされた画像データをデコードして保存する。
 
         Args:
@@ -55,9 +73,8 @@ class ImageProcessing:
         img = cv2.imdecode(img_jpg, cv2.IMREAD_COLOR)
         # 画像を保存
         self.__save_image(img)
-        return "SUCCESS"
 
-    def img_processing(self):
-        """受信画像に対する処理"""
-        # TODO 動体検知を行う
-        return
+        # 動体検知を行う
+        detection_status, detected_area = self.__motion_detector.detect(img)
+        response = self.__make_response(detection_status, detected_area)
+        return response

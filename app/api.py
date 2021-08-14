@@ -1,11 +1,14 @@
 """リクエストに対するルーティング実装"""
 
-from flask import Flask, request, make_response, render_template
+from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from . import service
 
 api = Flask(__name__)
 """Flask apiオブジェクト"""
+# レスポンスのjsonの文字コードを(asciiでなく)utf-8にする。
+# これを設定しないと日本語がunicodeになる。
+api.config["JSON_AS_ASCII"] = False
 
 # CORS(Cross-Origin Resource Sharing)対応のために必要
 CORS(api)
@@ -27,7 +30,7 @@ def capture_img():
     img_base64 = request.form.get("img")
     if img_base64 is None:
         # Noneの場合はレスポンスを返して終了
-        return make_response("FAILURE"), 400
+        return jsonify(service.make_response_dict(False, {})), 400
     # 画像データを保存
     msg = image_prosessor.save_img(img_base64)
-    return make_response(msg), 200
+    return jsonify(service.make_response_dict(True, msg)), 200
