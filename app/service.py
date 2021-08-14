@@ -6,13 +6,26 @@ import cv2
 from app.python_modules import RingCounter, MotionDetection
 
 
-def make_response_dict(request_status: bool, detection_result: dict) -> dict:
+def make_response_dict(
+    request_status: bool, motion_detection_result: dict
+) -> dict:
+    """レスポンスのjsonを生成するもととなる辞書型を生成する
+
+    Args:
+        request_status: リクエストステータス。
+            True: リクエストパラメータが正常
+            False: リクエストパラメータが不正
+        motion_detection_result: 動体検知結果
+
+    Returns:
+        レスポンスのjsonを生成するもととなる辞書型
+    """
     response = dict.fromkeys(["request_status", "detection_result"])
     if request_status is True:
         response["request_status"] = "OK"
     else:
         response["request_status"] = "NG"
-    response["detection_result"] = str(detection_result)
+    response["detection_result"] = str(motion_detection_result)
     return response
 
 
@@ -49,8 +62,19 @@ class ImageProcessing:
         return
 
     def __make_response(
-        self, detection_status: bool, detected_area: tuple
+        self, detection_status: bool, detected_area: tuple(int, int, int, int)
     ) -> dict:
+        """動体検知結果を格納した辞書型を作成する
+
+        Args:
+            detection_status: 動体を検知したか
+                True: 検知した。
+                False: 検知しなかった
+            detected_area: 検知した動体の位置
+
+        Returns:
+            動体検知結果を格納した辞書型
+        """
         response = dict.fromkeys(["detection_status", "detected_area"])
         response["detection_status"] = str(detection_status)
         response["detected_area"] = str(detected_area)
@@ -63,7 +87,7 @@ class ImageProcessing:
             img_base64: base64にエンコードされた画像データ
 
         Returns:
-            レスポンスメッセージ
+            動体検知結果
         """
         # binary <- string base64
         img_binary = base64.b64decode(img_base64)

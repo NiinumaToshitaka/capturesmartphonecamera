@@ -22,7 +22,7 @@ class MotionDetection:
         self.__before_frame = None
         """前フレーム"""
 
-    def detect(self, frame) -> (bool, tuple):
+    def detect(self, frame) -> (bool, tuple(int, int, int, int)):
         """動体検知を実行
 
         Args:
