@@ -47,6 +47,8 @@ class MotionDetection:
     """動体とみなす検知結果面積の最小値[pixel]"""
     __AREA_LIMIT_MAX = 10000
     """動体とみなす検知結果面積の最大値[pixel]"""
+    __ACCUMULATION_WEIGHT = 0.5
+    """前フレームとの移動平均の重み"""
 
     def __init__(self):
         self.__before_frame = None
@@ -75,12 +77,25 @@ class MotionDetection:
             self.__before_frame = gray.copy().astype("float")
             return (False, ())
         # 現フレームと前フレームの加重平均を使うと良いらしい
-        cv2.accumulateWeighted(gray, self.__before_frame, 0.5)
+        cv2.accumulateWeighted(
+            gray, self.__before_frame, MotionDetection.__ACCUMULATION_WEIGHT
+        )
         mdframe = cv2.absdiff(gray, cv2.convertScaleAbs(self.__before_frame))
         """動いているところが明るい画像"""
 
         # 動いているエリアの面積を計算してちょうどいい検出結果を抽出する
-        thresh = cv2.threshold(mdframe, 3, 255, cv2.THRESH_BINARY)[1]
+        THRESHOLD = 3
+        """しきい値"""
+        MAXVAL = 255
+        """2値化したときにしきい値以上の画素に与える値。
+        中途半端な色にする理由は特にないので真っ黒にする。
+        """
+        thresh = cv2.threshold(
+            mdframe,
+            THRESHOLD,
+            MAXVAL,
+            cv2.THRESH_BINARY,
+        )[1]
         """2値化画像"""
         # 輪郭データに変換してくれるfindContours
         # RETR_EXTERNAL: 一番外側の輪郭を出力する
