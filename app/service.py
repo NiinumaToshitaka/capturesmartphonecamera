@@ -43,6 +43,11 @@ class MotionDetection:
         (https://ensekitt.hatenablog.com/entry/2018/06/11/200000)のコードを実装した。
     """
 
+    __AREA_LIMIT_MIN = 1000
+    """動体とみなす検知結果面積の最小値[pixel]"""
+    __AREA_LIMIT_MAX = 10000
+    """動体とみなす検知結果面積の最大値[pixel]"""
+
     def __init__(self):
         self.__before_frame = None
         """前フレーム"""
@@ -95,21 +100,21 @@ class MotionDetection:
         """輪郭の面積の最大値"""
         target = contours[0]
         """面積が最も大きい輪郭"""
-        AREA_LIMIT_MIN = 1000
-        """動体とみなす面積の最小値"""
-        AREA_LIMIT_MAX = 10000
-        """動体とみなす面積の最大値"""
 
         # 検出した輪郭のうち、面積が最大のものを求める
         for cnt in contours:
             # 輪郭の面積を求めてくれるcontourArea
             area = cv2.contourArea(cnt)
-            if max_area < area and AREA_LIMIT_MIN < area < AREA_LIMIT_MAX:
+            if (max_area < area) and (
+                MotionDetection.__AREA_LIMIT_MIN
+                < area
+                < MotionDetection.__AREA_LIMIT_MAX
+            ):
                 max_area = area
                 target = cnt
 
         # 動いているエリアのうちそこそこの大きさのものがあればそれを矩形で表示する
-        if max_area <= AREA_LIMIT_MIN:
+        if max_area <= MotionDetection.__AREA_LIMIT_MIN:
             # 検知できなかった場合
             return (False, ())
         else:
