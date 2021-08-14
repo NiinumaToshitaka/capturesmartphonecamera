@@ -62,22 +62,19 @@ class ImageProcessing:
         return
 
     def __make_response(
-        self, detection_status: bool, detected_area: tuple(int, int, int, int)
+        self, detection_result: MotionDetection.MotionDetectionResult
     ) -> dict:
         """動体検知結果を格納した辞書型を作成する
 
         Args:
-            detection_status: 動体を検知したか
-                True: 検知した。
-                False: 検知しなかった
-            detected_area: 検知した動体の位置
+            detection_result: 動体検知結果
 
         Returns:
             動体検知結果を格納した辞書型
         """
         response = dict.fromkeys(["detection_status", "detected_area"])
-        response["detection_status"] = str(detection_status)
-        response["detected_area"] = str(detected_area)
+        response["detection_status"] = str(detection_result.has_detect)
+        response["detected_area"] = str(detection_result.detected_area)
         return response
 
     def save_img(self, img_base64: str) -> dict:
@@ -99,6 +96,6 @@ class ImageProcessing:
         self.__save_image(img)
 
         # 動体検知を行う
-        detection_status, detected_area = self.__motion_detector.detect(img)
-        response = self.__make_response(detection_status, detected_area)
+        detection_result = self.__motion_detector.detect(img)
+        response = self.__make_response(detection_result)
         return response

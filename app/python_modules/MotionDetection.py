@@ -2,6 +2,30 @@
 
 import cv2
 
+# tuple型の型アノテーションに使用
+from typing import Tuple
+
+
+class MotionDetectionResult:
+    """動体検知結果"""
+
+    def __init__(
+        self, has_detect: bool, detected_area: Tuple[int, int, int, int]
+    ):
+        """コンストラクタ
+
+        Args:
+            has_detect: 動体検知フラグ
+                True: 検知した
+                False: 検知しなかった
+            detected_area: 検知した動体の位置
+                画像に対して、(x, y, width, height)の順
+        """
+        self.has_detect = has_detect
+        """動体検知フラグ"""
+        self.detected_area = detected_area
+        """検知した動体の位置"""
+
 
 class MotionDetection:
     """画像からの動体検知を扱う
@@ -22,19 +46,14 @@ class MotionDetection:
         self.__before_frame = None
         """前フレーム"""
 
-    def detect(self, frame) -> (bool, tuple(int, int, int, int)):
+    def detect(self, frame) -> MotionDetectionResult:
         """動体検知を実行
 
         Args:
             frame (numpy.ndarray): 画像データ
 
         Returns:
-            bool: 動体を検知したか。
-                  True: 検知した。
-                  False: 検知しなかった。
-            tuple: 動体を検知した場合、検知した動体の位置。
-                   画像に対して、(x, y, width, height)の順。
-                   動体を検知しなかった場合は空のtuple。
+            動体検知結果
         """
         # 取り込んだフレームに対して差分をとって動いているところが明るい画像を作る
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -43,7 +62,7 @@ class MotionDetection:
             # 初めてフレームを取得した場合は、前フレームをセットして終了
             print("before frame is None")
             self.__before_frame = gray.copy().astype("float")
-            return (False, ())
+            return MotionDetectionResult(False, ())
         # 現フレームと前フレームの加重平均を使うと良いらしい
         cv2.accumulateWeighted(
             gray, self.__before_frame, MotionDetection.__ACCUMULATION_WEIGHT
@@ -77,7 +96,7 @@ class MotionDetection:
         # 差分が存在しないため、動体が存在しない。
         if 0 == len(contours):
             print("detect no motion")
-            return (False, ())
+            return MotionDetectionResult(False, ())
 
         max_area = 0
         """輪郭の面積の最大値"""
@@ -105,4 +124,4 @@ class MotionDetection:
             # 諸般の事情で矩形検出とした。
             x, y, w, h = cv2.boundingRect(target)
             """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
-            return (True, (x, y, w, h))
+            return MotionDetectionResult(True, (x, y, w, h))
