@@ -54,15 +54,13 @@ class MotionDetection:
             frame (numpy.ndarray): 画像データ
 
         Returns:
-            bool: 動体を検知したか。True: 検知した。False: 検知しなかった。
-            tuple: 動体を検知した場合、検知した動体の位置。画像に対して、(x, y, width, height)の順。
+            bool: 動体を検知したか。
+                  True: 検知した。
+                  False: 検知しなかった。
+            tuple: 動体を検知した場合、検知した動体の位置。
+                   画像に対して、(x, y, width, height)の順。
                    動体を検知しなかった場合は空のtuple。
         """
-        # 加工なし画像を表示する
-        cv2.imshow("Raw Frame", frame)
-        # キー入力を待つ
-        cv2.waitKey(0)
-
         # 取り込んだフレームに対して差分をとって動いているところが明るい画像を作る
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         """グレイスケール化した画像"""
@@ -74,26 +72,18 @@ class MotionDetection:
         # 現フレームと前フレームの加重平均を使うと良いらしい
         cv2.accumulateWeighted(gray, self.__before_frame, 0.5)
         mdframe = cv2.absdiff(gray, cv2.convertScaleAbs(self.__before_frame))
-
-        # 動いているところが明るい画像を表示する
-        cv2.imshow("MotionDetected Frame", mdframe)
-        # キー入力を待つ
-        cv2.waitKey(0)
+        """動いているところが明るい画像"""
 
         # 動いているエリアの面積を計算してちょうどいい検出結果を抽出する
         thresh = cv2.threshold(mdframe, 3, 255, cv2.THRESH_BINARY)[1]
         """2値化画像"""
-
-        cv2.imshow("threshold Frame", thresh)
-        # キー入力を待つ
-        cv2.waitKey(0)
-
         # 輪郭データに変換してくれるfindContours
         # RETR_EXTERNAL: 一番外側の輪郭を出力する
         # CHAIN_APPROX_SIMPLE: 輪郭を出力するときに、省略できる検出点は省略する
         contours, hierarchy = cv2.findContours(
             thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
         )
+        """検出した輪郭のリスト, 検出した輪郭の階層情報"""
 
         # 輪郭を検出できなかった場合、前フレームと現フレームとの
         # 差分が存在しないため、動体が存在しない。
@@ -101,7 +91,6 @@ class MotionDetection:
             print("detect no motion")
             return (False, ())
 
-        """検出した輪郭のリスト, 検出した輪郭の階層情報"""
         max_area = 0
         """輪郭の面積の最大値"""
         target = contours[0]
@@ -122,33 +111,13 @@ class MotionDetection:
         # 動いているエリアのうちそこそこの大きさのものがあればそれを矩形で表示する
         if max_area <= AREA_LIMIT_MIN:
             # 検知できなかった場合
-            areaframe = frame
-            cv2.putText(
-                areaframe,
-                "not detected",
-                (0, 50),
-                cv2.FONT_HERSHEY_PLAIN,
-                3,
-                (0, 255, 0),
-                3,
-                cv2.LINE_AA,
-            )
-            cv2.imshow("MotionDetected Area Frame", areaframe)
-            # キー入力を待つ
-            cv2.waitKey(0)
             return (False, ())
         else:
+            # 検知できた場合
             # 諸般の事情で矩形検出とした。
             x, y, w, h = cv2.boundingRect(target)
-            areaframe = cv2.rectangle(
-                frame, (x, y), (x + w, y + h), (0, 255, 0), 2
-            )
-            cv2.imshow("MotionDetected Area Frame", areaframe)
-            # キー入力を待つ
-            cv2.waitKey(0)
-            detected_area = (x, y, w, h)
-            """動体の位置"""
-            return (True, detected_area)
+            """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
+            return (True, (x, y, w, h))
 
 
 class ImageProcessing:
