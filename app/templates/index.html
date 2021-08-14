@@ -23,6 +23,9 @@
             <button type="button" id="send">サーバへ送信</button>
         </form>
         <p>送信ステータス: <span id="sendResult"></span></p>
+        <p>動体検知: <span id="detectionStatus"></span></p>
+        <p>検知位置: <span id="detectionArea"></span></p>
+        <p>JSON: <span id="responseJson"></span></p>
     </div>
 
     <script src="{{url_for('static', filename='script.js')}}"></script>

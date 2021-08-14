@@ -71,7 +71,7 @@ class ImageProcessing:
         """
         response = dict.fromkeys(["detection_status", "detected_area"])
         response["detection_status"] = detection_result.has_detect
-        response["detected_area"] = str(detection_result.detected_area)
+        response["detected_area"] = detection_result.detected_area
         return response
 
     def save_img(self, img_base64: str) -> dict:
