@@ -39,8 +39,8 @@ def test_motion_detection():
     # 動体検知
     detection_result = motion_detector.detect(frame_0)
     # 初回実行時は比較するべき前フレームが存在しないので、
-    # 検知結果が必ずFalseになる
-    assert detection_result.has_detect is False
+    # 検知結果が必ず0個になる
+    assert 0 == len(detection_result.detected_area)
 
     # 画像ファイルパスを生成
     filepath_1 = SAVE_PATH.format(1)
@@ -58,30 +58,34 @@ def test_motion_detection():
     # 動体検知
     detection_result = motion_detector.detect(frame_1)
     """検知結果、検知した動体の位置"""
-    print("frame_1 status = {}".format(detection_result.has_detect))
-    if detection_result.has_detect is True:
-        rect = detection_result.detected_area
-        # 検知した動体の位置に矩形を描画
-        print("detected_area = {}".format(rect))
-        # 現フレームをコピー
+    print(
+        "frame_1 detected_area count = {}".format(
+            len(detection_result.detected_area)
+        )
+    )
+    if 0 < len(detection_result.detected_area):
         img = frame_1.copy()
+        """現フレームをコピー"""
         RECT_COLOR = (0, 255, 0)
         """矩形の描画色"""
         RECT_THICKNESS = 2
         """矩形の線の太さ"""
-        cv2.rectangle(
-            img,
-            (
-                rect[0],
-                rect[1],
-            ),
-            (
-                rect[0] + rect[2],
-                rect[1] + rect[3],
-            ),
-            RECT_COLOR,
-            RECT_THICKNESS,
-        )
+        for rect in detection_result.detected_area:
+            # 検知した動体の位置に矩形を描画
+            print("detected_area = {}".format(rect))
+            cv2.rectangle(
+                img,
+                (
+                    rect[0],
+                    rect[1],
+                ),
+                (
+                    rect[0] + rect[2],
+                    rect[1] + rect[3],
+                ),
+                RECT_COLOR,
+                RECT_THICKNESS,
+            )
         # 画像を表示
         cv2.imshow(WINDOW_NAME, img)
         # キー入力を待つ

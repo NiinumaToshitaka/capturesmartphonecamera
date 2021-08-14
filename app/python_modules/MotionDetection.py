@@ -91,30 +91,26 @@ class MotionDetection:
             print("detect no motion")
             return MotionDetectionResult([])
 
-        max_area = 0
-        """輪郭の面積の最大値"""
-        target = contours[0]
-        """面積が最も大きい輪郭"""
+        # 面積が規定の範囲にある輪郭を取り出す
+        valid_contours = [
+            cnt
+            for cnt in contours
+            if MotionDetection.__AREA_LIMIT_MIN
+            < cv2.contourArea(cnt)
+            < MotionDetection.__AREA_LIMIT_MAX
+        ]
 
-        # 検出した輪郭のうち、面積が最大のものを求める
-        for cnt in contours:
-            # 輪郭の面積を求めてくれるcontourArea
-            area = cv2.contourArea(cnt)
-            if (max_area < area) and (
-                MotionDetection.__AREA_LIMIT_MIN
-                < area
-                < MotionDetection.__AREA_LIMIT_MAX
-            ):
-                max_area = area
-                target = cnt
-
-        # 動いているエリアのうちそこそこの大きさのものがあればそれを矩形で表示する
-        if max_area <= MotionDetection.__AREA_LIMIT_MIN:
+        # 動体検知結果オブジェクトを返す
+        if 0 == len(valid_contours):
             # 検知できなかった場合
             return MotionDetectionResult([])
         else:
+            detected_area = []
+            """検知した矩形"""
             # 検知できた場合
             # 諸般の事情で矩形検出とした。
-            x, y, w, h = cv2.boundingRect(target)
-            """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
-            return MotionDetectionResult([(x, y, w, h)])
+            for cnt in valid_contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
+                detected_area.append((x, y, w, h))
+            return MotionDetectionResult(detected_area)
