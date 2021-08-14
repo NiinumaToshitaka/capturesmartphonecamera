@@ -5,7 +5,7 @@
 """
 
 import cv2
-import service
+from python_modules import MotionDetection
 
 
 def test_motion_detection():
@@ -14,7 +14,7 @@ def test_motion_detection():
     """画像の保存先パス"""
     WINDOW_NAME = "motion detection result"
     """検知結果を表示するウィンドウ名"""
-    motion_detector = service.MotionDetection()
+    motion_detector = MotionDetection.MotionDetection()
     """動体検知オブジェクト"""
 
     # 画像ファイルパスを生成

@@ -1,7 +1,7 @@
 """RingCounterクラスのテストケース"""
 
 import unittest
-import service
+from python_modules import RingCounter
 
 
 class TestRingCounter(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestRingCounter(unittest.TestCase):
 
     def test_increment(self):
         """カウントする"""
-        counter = service.RingCounter(TestRingCounter.__COUNT_LIMIT)
+        counter = RingCounter.RingCounter(TestRingCounter.__COUNT_LIMIT)
         """カウンタ"""
         # カウントする
         counter.increment()
@@ -24,7 +24,7 @@ class TestRingCounter(unittest.TestCase):
 
     def test_count_limit(self):
         """規定回数カウントしたら、カウンタが0に戻る"""
-        counter = service.RingCounter(TestRingCounter.__COUNT_LIMIT)
+        counter = RingCounter.RingCounter(TestRingCounter.__COUNT_LIMIT)
         """カウンタ"""
         # 規定回数カウント
         for i in range(0, TestRingCounter.__COUNT_LIMIT):
