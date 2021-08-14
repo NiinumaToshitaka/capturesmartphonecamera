@@ -58,7 +58,10 @@ function reset_sending_status() {
  * @param {string} status 送信ステータス文字列
  */
 function update_sending_status(status) {
-    document.getElementById("sendResult").innerHTML = status;
+    // json形式のデータをパース
+    const json_data = JSON.parse(status);
+    document.getElementById("sendResult").innerHTML
+        = json_data.request_status ? "OK" : "NG";
 }
 
 /** 
