@@ -118,7 +118,7 @@ class MotionDetection:
         # 動いているエリアのうちそこそこの大きさのものがあればそれを矩形で表示する
         if max_area <= MotionDetection.__AREA_LIMIT_MIN:
             # 検知できなかった場合
-            return (False, ())
+            return MotionDetectionResult(False, ())
         else:
             # 検知できた場合
             # 諸般の事情で矩形検出とした。
