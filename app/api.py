@@ -16,7 +16,7 @@ image_prosessor = service.ImageProcessing()
 
 @api.route("/", methods=["GET"])
 def index():
-    return render_template("index.html")
+    return render_template("index.html"), 200
 
 
 @api.route("/capture_img", methods=["POST"])
@@ -27,9 +27,7 @@ def capture_img():
     img_base64 = request.form.get("img")
     if img_base64 is None:
         # Noneの場合はレスポンスを返して終了
-        return make_response("FAILURE")
+        return make_response("FAILURE"), 400
     # 画像データを保存
     msg = image_prosessor.save_img(img_base64)
-    # 画像に対する処理を実行
-    image_prosessor.img_processing()
-    return make_response(msg)
+    return make_response(msg), 200
