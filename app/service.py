@@ -21,11 +21,8 @@ def make_response_dict(
         レスポンスのjsonを生成するもととなる辞書型
     """
     response = dict.fromkeys(["request_status", "detection_result"])
-    if request_status is True:
-        response["request_status"] = "OK"
-    else:
-        response["request_status"] = "NG"
-    response["detection_result"] = str(motion_detection_result)
+    response["request_status"] = request_status
+    response["detection_result"] = motion_detection_result
     return response
 
 
@@ -73,7 +70,7 @@ class ImageProcessing:
             動体検知結果を格納した辞書型
         """
         response = dict.fromkeys(["detection_status", "detected_area"])
-        response["detection_status"] = str(detection_result.has_detect)
+        response["detection_status"] = detection_result.has_detect
         response["detected_area"] = str(detection_result.detected_area)
         return response
 
