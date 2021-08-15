@@ -6,9 +6,9 @@
 
     <body>
         <div>動体検知結果</div>
-        {% if images %} {% for path in images %}
+        {% if image_datetimes %} {% for path in image_datetimes %}
         <div>
-            <img src="/static/detection_results/{{ path }}" />
+            <img src="/static/detection_results/{{ path }}_motion.jpg" />
             {{ path }}
         </div>
         {% endfor %} {% endif %}

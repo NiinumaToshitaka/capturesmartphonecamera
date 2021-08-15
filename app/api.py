@@ -45,7 +45,7 @@ def index():
 
 @api.route("/capture_img", methods=["POST"])
 def capture_img():
-    """画像データを保存する"""
+    """画像データに対する処理を行う"""
     # リクエストから"img"パラメータを取得する。
     # パラメータが存在しない場合はNoneになる。
     img_base64 = request.form.get("img")
@@ -55,7 +55,7 @@ def capture_img():
             jsonify(service.make_response_dict(False, {})),
             HttpResponseStatusCode.Bad_Request,
         )
-    # 画像データを保存
+    # 画像データに対する処理を行う
     msg = image_prosessor.process(img_base64)
     return (
         jsonify(service.make_response_dict(True, msg)),
@@ -66,16 +66,20 @@ def capture_img():
 @api.route("/motion", methods=["GET"])
 def motion():
     """動体検知結果のページを返す"""
-    # ファイル名は保存時の日付時刻になっているので、
-    # 逆順にソートすることで新しい順になる。
-    detection_result_images = reversed(
-        sorted(os.listdir(DETECTION_RESULTS_SAVE_DIR))
+    # ファイル名は"YYYYMMDD_HHMMSS_[.*].jpg"("YYYYMMDD_HHMMSS"は保存時の日付時刻)なので、
+    # 先頭から15文字を取り出すことで、保存時の日付時刻を取得することができる。
+    # 同一の日付時刻に3枚("current", "motion", "prev")の画像が保存されるため、
+    # ファイル名から日付時刻を取得したあと、"set"関数により重複を取り除く。
+    # 逆順にソートすることで日付時刻が新しい順になる。
+    image_datetimes = reversed(
+        sorted(set([x[0:15] for x in os.listdir(DETECTION_RESULTS_SAVE_DIR)]))
     )
+
     """動体検知結果の画像ファイルのリスト"""
     return (
         render_template(
             "motion_detection_result.html",
-            images=detection_result_images,
+            image_datetimes=image_datetimes,
         ),
         HttpResponseStatusCode.OK,
     )
