@@ -42,16 +42,16 @@ class ImageProcessing:
         self.__motion_detector = MotionDetection.MotionDetection()
         """動体検知オブジェクト"""
 
-    def __save_image(self, img):
+    def __save_image(self, img: np.ndarray):
         """画像データをファイルに保存する
 
         Args:
-            img (numpy.ndarray): 画像データ
+            img: 画像データ
         """
         filepath = ImageProcessing.__SAVE_PATH.format(
             self.__counter.get_count()
         )
-        """デコードされた画像の保存先パス"""
+        """画像の保存先パス"""
         # 画像を保存
         cv2.imwrite(filepath, img)
         # 画像の保存枚数カウンタを1増やす
@@ -73,14 +73,14 @@ class ImageProcessing:
         response["detected_area"] = detection_result.detected_area
         return response
 
-    def save_img(self, img_base64: str) -> dict:
-        """base64にエンコードされた画像データをデコードして保存する。
+    def __decode_img(img_base64: str) -> np.ndarray:
+        """base64にエンコードされた画像データをデコードする
 
         Args:
             img_base64: base64にエンコードされた画像データ
 
         Returns:
-            動体検知結果
+            画像
         """
         # binary <- string base64
         img_binary = base64.b64decode(img_base64)
@@ -88,9 +88,22 @@ class ImageProcessing:
         img_jpg = np.frombuffer(img_binary, dtype=np.uint8)
         # raw image <- jpg
         img = cv2.imdecode(img_jpg, cv2.IMREAD_COLOR)
+        return img
+
+    def process(self, img_base64: str) -> dict:
+        """base64にエンコードされた画像データに対して動体検知を行う
+
+        Args:
+            img_base64: base64にエンコードされた画像データ
+
+        Returns:
+            動体検知結果
+        """
+        # 画像データをデコード
+        img = ImageProcessing.__decode_img(img_base64)
+        """画像"""
         # 画像を保存
         self.__save_image(img)
-
         # 動体検知を行う
         detection_result = self.__motion_detector.detect(img)
         response = self.__make_response(detection_result)

@@ -53,7 +53,7 @@ class MotionDetection:
         """グレイスケール化した画像"""
         if self.__before_frame is None:
             # 初めてフレームを取得した場合は、前フレームをセットして終了
-            print("before frame is None")
+            # print("before frame is None")
             self.__before_frame = gray.copy().astype("float")
             return MotionDetectionResult([])
         # 現フレームと前フレームの加重平均を使うと良いらしい
@@ -88,7 +88,7 @@ class MotionDetection:
         # 輪郭を検出できなかった場合、前フレームと現フレームとの
         # 差分が存在しないため、動体が存在しない。
         if 0 == len(contours):
-            print("detect no motion")
+            # print("detect no motion")
             return MotionDetectionResult([])
 
         # 面積が規定の範囲にある輪郭を取り出す

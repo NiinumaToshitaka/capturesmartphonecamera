@@ -32,5 +32,5 @@ def capture_img():
         # Noneの場合はレスポンスを返して終了
         return jsonify(service.make_response_dict(False, {})), 400
     # 画像データを保存
-    msg = image_prosessor.save_img(img_base64)
+    msg = image_prosessor.process(img_base64)
     return jsonify(service.make_response_dict(True, msg)), 200
