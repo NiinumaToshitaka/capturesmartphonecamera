@@ -2,7 +2,24 @@
 
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
+from enum import IntEnum
 from . import service
+
+
+class HttpResponseStatusCode(IntEnum):
+    """HTTPレスポンスステータスコード
+
+    値の詳細は
+    [HTTP レスポンスステータスコード - HTTP | MDN]
+    (https://developer.mozilla.org/ja/docs/Web/HTTP/Status)
+    を参照
+    """
+
+    OK = 200
+    """リクエストが成功した"""
+    Bad_Request = 400
+    """構文が無効であるためサーバーがリクエストを理解できない"""
+
 
 api = Flask(__name__)
 """Flask apiオブジェクト"""
@@ -19,7 +36,7 @@ image_prosessor = service.ImageProcessing()
 
 @api.route("/", methods=["GET"])
 def index():
-    return render_template("index.html"), 200
+    return render_template("index.html"), HttpResponseStatusCode.OK
 
 
 @api.route("/capture_img", methods=["POST"])
@@ -30,13 +47,22 @@ def capture_img():
     img_base64 = request.form.get("img")
     if img_base64 is None:
         # Noneの場合はレスポンスを返して終了
-        return jsonify(service.make_response_dict(False, {})), 400
+        return (
+            jsonify(service.make_response_dict(False, {})),
+            HttpResponseStatusCode.Bad_Request,
+        )
     # 画像データを保存
     msg = image_prosessor.process(img_base64)
-    return jsonify(service.make_response_dict(True, msg)), 200
+    return (
+        jsonify(service.make_response_dict(True, msg)),
+        HttpResponseStatusCode.OK,
+    )
 
 
 @api.route("/motion", methods=["GET"])
 def motion():
     """動体検知結果のページを返す"""
-    return render_template("motion_detection_result.html"), 200
+    return (
+        render_template("motion_detection_result.html"),
+        HttpResponseStatusCode.OK,
+    )
