@@ -59,7 +59,7 @@ class ImageProcessing:
         return
 
     def __make_response(
-        self, detection_result: MotionDetection.MotionDetectionResult
+        detection_result: MotionDetection.MotionDetectionResult,
     ) -> dict:
         """動体検知結果を格納した辞書型を作成する
 
@@ -106,5 +106,5 @@ class ImageProcessing:
         self.__save_image(img)
         # 動体検知を行う
         detection_result = self.__motion_detector.detect(img)
-        response = self.__make_response(detection_result)
+        response = ImageProcessing.__make_response(detection_result)
         return response
