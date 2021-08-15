@@ -27,6 +27,10 @@
         <p>JSON: <span id="responseJson"></span></p>
     </div>
 
+    <!-- `url_for`はFlaskの機能。
+        静的ファイルを`static`ディレクトリに`filename`のファイルを格納しておくと、
+        ファイルへのリンクが展開される。
+    -->
     <script src="{{url_for('static', filename='script.js')}}"></script>
 </body>
 
