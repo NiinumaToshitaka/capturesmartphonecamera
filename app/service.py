@@ -3,8 +3,6 @@
 import base64
 import numpy as np
 import cv2
-from datetime import datetime
-import os
 from app.python_modules import RingCounter, MotionDetection
 
 
@@ -26,63 +24,6 @@ def make_response_dict(
     response["request_status"] = request_status
     response["detection_result"] = motion_detection_result
     return response
-
-
-class MotionDetectionResultProcessing:
-    """動体検知結果を扱うクラス"""
-
-    __SAVE_DIR = "detection_results/"
-    """検知結果の保存先ディレクトリ"""
-
-    def save(
-        detection_result: MotionDetection.MotionDetectionResult,
-        current_frame: np.ndarray,
-        prev_frame: np.ndarray,
-    ) -> None:
-        """検知結果を保存する
-
-        Args:
-            detection_result: 動体検知結果
-            current_frame: 現フレーム
-            prev_frame: 前フレーム
-        """
-        # 現フレームを、矩形を描画する画像としてコピー
-        canvas = current_frame.copy()
-        """現フレーム"""
-        res = detection_result.get()
-        """検知結果"""
-
-        # 検知結果の矩形を描画
-        for rect in res:
-            top_left = (rect[0], rect[1])
-            bottom_right = (rect[0] + rect[2], rect[1] + rect[3])
-            color = (0, 255, 0)
-            thickness = 2
-            cv2.rectangle(canvas, top_left, bottom_right, color, thickness)
-
-        now = datetime.now()
-        """現在時刻"""
-        # 現在時刻を文字列に変換
-        # フォーマットは、2021/08/15 11:52:14の場合、"20210815_115214"となる。
-        now_str = now.strftime("%Y%m%d_%H%M%S")
-        """現在時刻の文字列表現"""
-        # 画像ファイルパス生成
-        basename_current_frame = "{}_current.jpg".format(now_str)
-        basename_prev_frame = "{}_prev.jpg".format(now_str)
-        filepath_current_frame = os.path.join(
-            MotionDetectionResultProcessing.__SAVE_DIR,
-            basename_current_frame,
-        )
-        filepath_prev_frame = os.path.join(
-            MotionDetectionResultProcessing.__SAVE_DIR,
-            basename_prev_frame,
-        )
-        # 画像を保存
-        cv2.imwrite(
-            filepath_current_frame,
-            canvas,
-        )
-        cv2.imwrite(filepath_prev_frame, prev_frame)
 
 
 class ImageProcessing:
@@ -160,19 +101,19 @@ class ImageProcessing:
             動体検知結果
         """
         # 画像データをデコード
-        img = ImageProcessing.__decode_image(img_base64)
+        current_image = ImageProcessing.__decode_image(img_base64)
         """画像"""
         # 画像を保存
-        self.__save_image(img)
+        self.__save_image(current_image)
         # 動体検知を行う
-        detection_result = self.__motion_detector.detect(img)
+        detection_result = self.__motion_detector.detect(current_image)
         response = ImageProcessing.__make_response(detection_result)
         print("detection_result.size() = {}".format(detection_result.size()))
         # 動体検知結果が空でなければ検知結果を保存
         if detection_result.size():
-            MotionDetectionResultProcessing.save(
-                detection_result, img, self.__prev_image
+            MotionDetection.MotionDetectionResultProcessing.save(
+                detection_result, current_image, self.__prev_image
             )
         # 現在のフレームを前フレームとして格納
-        self.__prev_image = img.copy()
+        self.__prev_image = current_image.copy()
         return response

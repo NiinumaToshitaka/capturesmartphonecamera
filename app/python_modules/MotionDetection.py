@@ -1,6 +1,9 @@
 """MotionDetectionクラス実装"""
 
+import numpy as np
 import cv2
+from datetime import datetime
+import os
 
 # tuple型の型アノテーションに使用
 from typing import Tuple, List
@@ -129,3 +132,60 @@ class MotionDetection:
                 """動体の位置(矩形左上のx座標, y座標, 矩形の幅, 高さ)"""
                 detected_area.append((x, y, w, h))
             return MotionDetectionResult(detected_area)
+
+
+class MotionDetectionResultProcessing:
+    """動体検知結果を扱うクラス"""
+
+    __SAVE_DIR = "detection_results/"
+    """検知結果の保存先ディレクトリ"""
+
+    def save(
+        detection_result: MotionDetectionResult,
+        current_frame: np.ndarray,
+        prev_frame: np.ndarray,
+    ) -> None:
+        """検知結果を保存する
+
+        Args:
+            detection_result: 動体検知結果
+            current_frame: 現フレーム
+            prev_frame: 前フレーム
+        """
+        # 現フレームを、矩形を描画する画像としてコピー
+        canvas = current_frame.copy()
+        """現フレーム"""
+        res = detection_result.get()
+        """検知結果"""
+
+        # 検知結果の矩形を描画
+        for rect in res:
+            top_left = (rect[0], rect[1])
+            bottom_right = (rect[0] + rect[2], rect[1] + rect[3])
+            color = (0, 255, 0)
+            thickness = 2
+            cv2.rectangle(canvas, top_left, bottom_right, color, thickness)
+
+        now = datetime.now()
+        """現在時刻"""
+        # 現在時刻を文字列に変換
+        # フォーマットは、2021/08/15 11:52:14の場合、"20210815_115214"となる。
+        now_str = now.strftime("%Y%m%d_%H%M%S")
+        """現在時刻の文字列表現"""
+        # 画像ファイルパス生成
+        basename_current_frame = "{}_current.jpg".format(now_str)
+        basename_prev_frame = "{}_prev.jpg".format(now_str)
+        filepath_current_frame = os.path.join(
+            MotionDetectionResultProcessing.__SAVE_DIR,
+            basename_current_frame,
+        )
+        filepath_prev_frame = os.path.join(
+            MotionDetectionResultProcessing.__SAVE_DIR,
+            basename_prev_frame,
+        )
+        # 画像を保存
+        cv2.imwrite(
+            filepath_current_frame,
+            canvas,
+        )
+        cv2.imwrite(filepath_prev_frame, prev_frame)
