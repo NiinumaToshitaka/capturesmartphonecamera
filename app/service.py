@@ -34,7 +34,7 @@ class ImageProcessing:
     __SAVE_COUNT_MAX = 10
     """画像を保存する最大枚数"""
 
-    def __init__(self):
+    def __init__(self, detection_result_save_dir: str):
         self.__counter = RingCounter.RingCounter(
             ImageProcessing.__SAVE_COUNT_MAX
         )
@@ -43,6 +43,8 @@ class ImageProcessing:
         """動体検知オブジェクト"""
         self.__prev_image: np.ndarray = None
         """前フレーム画像"""
+        self.__detection_result_save_dir = detection_result_save_dir
+        """動体検知結果の保存先ディレクトリ"""
 
     def __save_image(self, img: np.ndarray) -> None:
         """画像データをファイルに保存する
@@ -112,7 +114,10 @@ class ImageProcessing:
         # 動体検知結果が空でなければ検知結果を保存
         if detection_result.size():
             MotionDetection.MotionDetectionResultProcessing.save(
-                detection_result, current_image, self.__prev_image
+                detection_result,
+                current_image,
+                self.__prev_image,
+                self.__detection_result_save_dir,
             )
         # 現在のフレームを前フレームとして格納
         self.__prev_image = current_image.copy()

@@ -137,20 +137,16 @@ class MotionDetection:
 class MotionDetectionResultProcessing:
     """動体検知結果を扱うクラス"""
 
-    __SAVE_DIR = "detection_results/"
-    """検知結果の保存先ディレクトリ"""
-
-    def __write_image(basename: str, image: np.ndarray) -> None:
+    def __write_image(basename: str, image: np.ndarray, save_dir: str) -> None:
         """画像データをファイルに保存する
 
         Args:
             basename: ファイル名
             image: 画像データ
+            save_dir: 画像の保存先ディレクトリ
         """
         # ファイルパスを生成
-        filepath = os.path.join(
-            MotionDetectionResultProcessing.__SAVE_DIR, basename
-        )
+        filepath = os.path.join(save_dir, basename)
         # 画像をファイルに保存
         cv2.imwrite(filepath, image)
         return
@@ -159,6 +155,7 @@ class MotionDetectionResultProcessing:
         detection_result: MotionDetectionResult,
         current_frame: np.ndarray,
         prev_frame: np.ndarray,
+        save_dir: str,
     ) -> None:
         """検知結果を保存する
 
@@ -171,6 +168,7 @@ class MotionDetectionResultProcessing:
             detection_result: 動体検知結果
             current_frame: 現フレーム
             prev_frame: 前フレーム
+            save_dir: 画像の保存先ディレクトリ
         """
         # 現フレームを、矩形を描画する画像としてコピー
         canvas = current_frame.copy()
@@ -195,9 +193,11 @@ class MotionDetectionResultProcessing:
         basename_motion = "{}_motion.jpg".format(now_str)
         # 画像を保存
         MotionDetectionResultProcessing.__write_image(
-            basename_current_frame, current_frame
+            basename_current_frame, current_frame, save_dir
         )
         MotionDetectionResultProcessing.__write_image(
-            basename_prev_frame, prev_frame
+            basename_prev_frame, prev_frame, save_dir
         )
-        MotionDetectionResultProcessing.__write_image(basename_motion, canvas)
+        MotionDetectionResultProcessing.__write_image(
+            basename_motion, canvas, save_dir
+        )

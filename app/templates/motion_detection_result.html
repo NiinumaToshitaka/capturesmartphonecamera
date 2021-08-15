@@ -6,7 +6,11 @@
 
     <body>
         <div>動体検知結果</div>
-        <div id="motionImage"></div>
-        <script src="{{url_for('static', filename='motion_detection_result.js')}}"></script>
+        {% if images %} {% for path in images %}
+        <div>
+            <img src="/static/detection_results/{{ path }}" />
+            {{ path }}
+        </div>
+        {% endfor %} {% endif %}
     </body>
 </html>

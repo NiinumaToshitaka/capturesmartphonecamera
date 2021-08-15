@@ -3,7 +3,11 @@
 from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from enum import IntEnum
+import os
 from . import service
+
+DETECTION_RESULTS_SAVE_DIR = "app/static/detection_results"
+"""検知結果を保存するディレクトリ"""
 
 
 class HttpResponseStatusCode(IntEnum):
@@ -30,7 +34,7 @@ api.config["JSON_AS_ASCII"] = False
 # CORS(Cross-Origin Resource Sharing)対応のために必要
 CORS(api)
 
-image_prosessor = service.ImageProcessing()
+image_prosessor = service.ImageProcessing(DETECTION_RESULTS_SAVE_DIR)
 """画像処理オブジェクト"""
 
 
@@ -62,7 +66,16 @@ def capture_img():
 @api.route("/motion", methods=["GET"])
 def motion():
     """動体検知結果のページを返す"""
+    # ファイル名は保存時の日付時刻になっているので、
+    # 逆順にソートすることで新しい順になる。
+    detection_result_images = reversed(
+        sorted(os.listdir(DETECTION_RESULTS_SAVE_DIR))
+    )
+    """動体検知結果の画像ファイルのリスト"""
     return (
-        render_template("motion_detection_result.html"),
+        render_template(
+            "motion_detection_result.html",
+            images=detection_result_images,
+        ),
         HttpResponseStatusCode.OK,
     )
