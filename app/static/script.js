@@ -132,11 +132,19 @@ function send() {
 }
 
 /** 動体検知処理のID */
-let moving_detection_interval_id = null;
+let moving_detection_interval_id = 0;
+/** 動体検知停止済みフラグ */
+let has_stopped_moving_detection = true;
+
 /** 動体検知を開始する */
 function start_moving_detection() {
     // 動体検知の実行間隔[msec]
     const interval_time = 3 * 1000;
+    // すでに動体検知が実行されている場合は何もしない
+    if (!has_stopped_moving_detection) {
+        return;
+    }
+    has_stopped_moving_detection = false;
     document.getElementById("movingDetectionStatus").innerText = "実行中";
     moving_detection_interval_id = setInterval(() => {
         update_canvas();
@@ -148,6 +156,7 @@ function start_moving_detection() {
 function stop_moving_detection() {
     document.getElementById("movingDetectionStatus").innerText = "停止中";
     clearInterval(moving_detection_interval_id);
+    has_stopped_moving_detection = true;
 }
 
 // 動画のキャプチャを開始
