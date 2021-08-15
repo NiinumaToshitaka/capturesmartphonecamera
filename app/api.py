@@ -34,3 +34,9 @@ def capture_img():
     # 画像データを保存
     msg = image_prosessor.process(img_base64)
     return jsonify(service.make_response_dict(True, msg)), 200
+
+
+@api.route("/motion", methods=["GET"])
+def motion():
+    """動体検知結果のページを返す"""
+    return render_template("motion_detection_result.html"), 200
