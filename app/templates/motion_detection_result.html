@@ -1,13 +1,12 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <title>動体検知結果</title>
+    </head>
 
-<head>
-    <title>動体検知結果</title>
-</head>
-
-<body>
-    TODO 動体検知結果を表示する
-    <script src="{{url_for('static', filename='motion_detection_result.js')}}"></script>
-</body>
-
+    <body>
+        <div>動体検知結果</div>
+        <div id="motionImage"></div>
+        <script src="{{url_for('static', filename='motion_detection_result.js')}}"></script>
+    </body>
 </html>
