@@ -40,11 +40,9 @@ function start_video_stream() {
 
 /** カメラから画像を取得してcanvasを更新する */
 function update_canvas() {
-    document.getElementById("shutter").addEventListener("click", () => {
-        const ctx = canvas.getContext("2d");
-        // canvasに画像を貼り付ける
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    });
+    const ctx = canvas.getContext("2d");
+    // canvasに画像を貼り付ける
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 }
 
 /** 画像データの送信ステータス文字列をリセットする */
@@ -125,19 +123,54 @@ function captureImg(img_base64) {
 
 /** サーバへ画像を送信する */
 function send() {
-    document.getElementById("send").addEventListener("click", () => {
-        // Canvasのデータを取得
-        // DataURI Schemaが返却される
-        // replaceで取得したbase64データのヘッドを取り除く
-        const img_base64 = canvas.toDataURL("image/jpeg").replace(/^.*,/, "");
-        // 送信
-        captureImg(img_base64);
-    });
+    // Canvasのデータを取得
+    // DataURI Schemaが返却される
+    // replaceで取得したbase64データのヘッドを取り除く
+    const img_base64 = canvas.toDataURL("image/jpeg").replace(/^.*,/, "");
+    // 送信
+    captureImg(img_base64);
+}
+
+/** 動体検知処理のID */
+let moving_detection_interval_id = null;
+/** 動体検知を開始する */
+function start_moving_detection() {
+    // 動体検知の実行間隔[msec]
+    const interval_time = 3 * 1000;
+    document.getElementById("movingDetectionStatus").innerText = "実行中";
+    moving_detection_interval_id = setInterval(() => {
+        update_canvas();
+        send();
+    }, interval_time);
+}
+
+/** 動体検知を停止する */
+function stop_moving_detection() {
+    document.getElementById("movingDetectionStatus").innerText = "停止中";
+    clearInterval(moving_detection_interval_id);
 }
 
 // 動画のキャプチャを開始
 start_video_stream();
+
 // カメラから画像を取得してcanvasを更新する
-update_canvas();
+document.getElementById("shutter").addEventListener("click", () => {
+    update_canvas();
+});
+
 // サーバへ画像を送信する
-send();
+document.getElementById("send").addEventListener("click", () => {
+    send();
+});
+
+// 動体検知を開始する
+document
+    .getElementById("startMovingDetection")
+    .addEventListener("click", () => {
+        start_moving_detection();
+    });
+
+// 動体検知を終了する
+document.getElementById("stopMovingDetection").addEventListener("click", () => {
+    stop_moving_detection();
+});

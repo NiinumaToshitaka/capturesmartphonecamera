@@ -1,37 +1,44 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+    <head>
+        <title>動体検知インタフェース</title>
+    </head>
 
-<head>
-    <title>Self Camera</title>
-</head>
-
-<body>
-    <div>
-        <p>カメラ画像</p>
-        <video id="myVideo" width="640" height="480" autoplay="1"></video>
-    </div>
-    <form>
-        <button type="button" id="shutter">シャッター</button>
-    </form>
-    <div>
-        <p>キャプチャ画像</p>
-        <canvas id="picture" width="640" height="480"></canvas>
-    </div>
-    <div>
+    <body>
         <form>
-            <button type="button" id="send">サーバへ送信</button>
+            <button type="button" id="startMovingDetection">
+                動体検知開始
+            </button>
+            <button type="button" id="stopMovingDetection">動体検知終了</button>
         </form>
-        <p>送信ステータス: <span id="sendResult"></span></p>
-        <p>動体検知: <span id="detectionStatus"></span></p>
-        <p>検知位置: <span id="detectionArea"></span></p>
-        <p>JSON: <span id="responseJson"></span></p>
-    </div>
+        <div>
+            動体検知実行状態: <span id="movingDetectionStatus">停止中</span>
+        </div>
+        <div>
+            <p>カメラ画像</p>
+            <video id="myVideo" width="640" height="480" autoplay="1"></video>
+        </div>
+        <form>
+            <button type="button" id="shutter">シャッター</button>
+        </form>
+        <div>
+            <p>キャプチャ画像</p>
+            <canvas id="picture" width="640" height="480"></canvas>
+        </div>
+        <div>
+            <form>
+                <button type="button" id="send">サーバへ送信</button>
+            </form>
+            <p>送信ステータス: <span id="sendResult"></span></p>
+            <p>動体検知: <span id="detectionStatus"></span></p>
+            <p>検知位置: <span id="detectionArea"></span></p>
+            <p>JSON: <span id="responseJson"></span></p>
+        </div>
 
-    <!-- `url_for`はFlaskの機能。
+        <!-- `url_for`はFlaskの機能。
         静的ファイルを`static`ディレクトリに`filename`のファイルを格納しておくと、
         ファイルへのリンクが展開される。
     -->
-    <script src="{{url_for('static', filename='script.js')}}"></script>
-</body>
-
+        <script src="{{url_for('static', filename='script.js')}}"></script>
+    </body>
 </html>
