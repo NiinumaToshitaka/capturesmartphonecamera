@@ -6,6 +6,10 @@ import cv2
 from typing import Tuple, List
 
 
+# TODO 単純に動体検知結果のデータ型を"List[Tuple[int, int, int, int]]"として定義したいのなら、
+#      [Type aliases]
+#      (https://docs.python.org/3/library/typing.html#type-aliases)
+#      のほうが素直
 class MotionDetectionResult:
     """動体検知結果"""
 
@@ -18,6 +22,17 @@ class MotionDetectionResult:
         """
         self.detected_area = detected_area
         """検知した動体の位置"""
+
+    def size(self) -> int:
+        """検知した動体の個数を返す
+
+        Returns:
+            検知した動体の個数
+        """
+        return len(self.detected_area)
+
+    def get(self) -> List[Tuple[int, int, int, int]]:
+        return self.detected_area.copy()
 
 
 class MotionDetection:

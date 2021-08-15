@@ -3,4 +3,5 @@ keys/
 .venv/
 __pycache__/
 images/*.jpg
+detection_results/*.jpg
 app/tests/images/
