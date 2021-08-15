@@ -110,7 +110,6 @@ class ImageProcessing:
         # 動体検知を行う
         detection_result = self.__motion_detector.detect(current_image)
         response = ImageProcessing.__make_response(detection_result)
-        print("detection_result.size() = {}".format(detection_result.size()))
         # 動体検知結果が空でなければ検知結果を保存
         if detection_result.size():
             MotionDetection.MotionDetectionResultProcessing.save(
